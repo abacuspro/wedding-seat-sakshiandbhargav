@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sakshi & Bhargav | Wedding Dinner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    @*<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">*@
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+
+ <style>
+
+     body {
+         margin: 0;
+         min-height: 100vh;
+         font-family: 'Poppins', sans-serif;
+         background: linear-gradient(135deg, #fff7f7, #fdecef);
+         overflow-x: hidden;
+     }
+
+     .handwriting {
+         font-family: 'Caveat', cursive;
+     }
+
+
+        .petal {
+            position: fixed;
+            top: -50px;
+            width: 18px;
+            height: 22px;
+            background: radial-gradient(circle at 30% 30%, #fff, #f7b7c9);
+            border-radius: 70% 30% 70% 30%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+
+
+        .wrapper {
+            position: relative;
+            z-index: 10;
+           /* min-height: 100vh;*/
+           padding-top:10%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255,255,255,0.96);
+            border-radius: 22px;
+            padding: 26px 22px;
+            box-shadow: 0 18px 40px rgba(0,0,0,.18);
+            text-align: center;
+        }
+
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin: 6px 0 2px;
+        }
+
+        .heart {
+            color: #cfa144;
+            font-size: 30px;
+        }
+
+        .subtitle {
+            color: #777;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .subtitle-2 {
+            color: #777;
+            font-size: 16px;
+        }
+
+
+        input {
+            width: 92%;
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #cfa144;
+            box-shadow: 0 0 0 2px rgba(207,161,68,.2);
+        }
+
+
+        .result {
+            margin-top: 18px;
+        }
+
+        .guest-card {
+            background: #faf4f6;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn .3s ease;
+        }
+
+        .guest-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .table-no {
+            background: linear-gradient(135deg, #d4af37, #cfa144);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            /*font-weight: 600;*/
+            font-size: 22px;    
+        }
+
+        .not-found {
+            margin-top: 16px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+     .highlight-guest {
+         background: #fff2cc;
+         color: #6b4e16;
+         padding: 6px 10px;
+         border-radius: 12px;
+         margin: 3px 0;
+         font-weight: 500;
+         width: 95%;
+     }
+    </style>
+</head>
+<body>
+
+    <!-- 🌸 Floating Petals -->
+    <div class="petal" style="left:5%; animation-duration:10s;"></div>
+    <div class="petal" style="left:15%; animation-duration:12s;"></div>
+    <div class="petal" style="left:30%; animation-duration:9s;"></div>
+    <div class="petal" style="left:45%; animation-duration:14s;"></div>
+    <div class="petal" style="left:60%; animation-duration:11s;"></div>
+    <div class="petal" style="left:75%; animation-duration:13s;"></div>
+    <div class="petal" style="left:90%; animation-duration:10s;"></div>
+
+    <div class="wrapper">
+        <div class="card">
+            <h1>Sakshi & Bhargav</h1>
+            <div class="subtitle-2">Hilton Bali Resort - March 6, 2026</div>
+            <div class="heart">♥</div>
+            <div class="subtitle">Wedding Dinner Seating</div>
+
+            <input id="searchInput"
+                   placeholder="Enter your full name"
+                   onkeyup="searchGuest()" />
+
+            <div class="result" id="result"></div>
+            <div class="not-found" id="notFound" style="display:none;">
+                Name not found 🌸<br>Please check with our staff
+            </div>
+
+            <div class="result" id="tableResult"></div>
+        </div>
+    </div>
+
+    <script>
+        let guests = [];
+
+        fetch('./SakshiAndBhargav.json')
+            .then(res => res.json())
+            .then(data => {
+                guests = data.sort((a, b) => a.name.localeCompare(b.name));
+            });
+
+        function searchGuest() {
+            const q = searchInput.value.toLowerCase().trim();
+            result.innerHTML = "";
+            tableResult.innerHTML = "";
+            notFound.style.display = "none";
+
+            if (q.length < 3) return;
+
+            const matches = guests.filter(g =>
+                g.name.toLowerCase().includes(q)
+            );
+
+            if (!matches.length) {
+                notFound.style.display = "block";
+                return;
+            }
+
+            // ===============================
+            // 1️ Show matched guest(s)
+            // ===============================
+            const matchedTables = new Set();
+
+            matches.forEach(g => {
+                matchedTables.add(g.table);
+                result.innerHTML += `
+                    <div class="guest-card">
+                        <div class="guest-name">${g.name}</div>
+                        <div class="table-no handwriting">Table ${g.table}</div>
+                    </div>`;
+            });
+
+            // ===============================
+            // 2️ Group ALL guests by table
+            // ===============================
+            const tables = {};
+            guests.forEach(g => {
+                if (!tables[g.table]) tables[g.table] = [];
+                tables[g.table].push(g.name);
+            });
+
+            // ===============================
+            // 3️ Render tables (matched table first)
+            // ===============================
+
+            // Assume first matched guest determines priority table
+            const priorityTable = matches[0].table;
+
+            // Get all table numbers sorted
+            const allTables = Object.keys(tables).sort((a, b) => a - b);
+
+            // Build new ordered list: [priority, rest...]
+            const orderedTables = [
+                priorityTable,
+                ...allTables.filter(t => t !== priorityTable)
+            ];
+
+            orderedTables.forEach(tableNo => {
+                const isPriority = tableNo === priorityTable;
+
+                tableResult.innerHTML += `
+        <div class="guest-card"
+             style="
+                flex-direction:column;
+                align-items:flex-start;
+                ${isPriority ? 'border:2px solid #cfa144;background:#fff6dd;' : ''}
+             ">
+            <div class="table-no handwriting" style="margin-bottom:8px;">
+                Table ${tableNo}
+            </div>
+
+            ${tables[tableNo].map(n => {
+                    const isMatch = matches.some(m => m.name === n);
+                    return isMatch
+                        ? `<div class="highlight-guest">${n}</div>`
+                        : `<div class="guest-name">• ${n}</div>`;
+                }).join('')}
+        </div>
+    `;
+            });
+
+        }
+    </script>
+
+
+</body>
+</html>
